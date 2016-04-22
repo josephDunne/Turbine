@@ -1,9 +1,5 @@
 #![crate_type = "rlib"]
 //#![deny(missing_doc)]
-// for ringbuffer.rs: (*mut).as_mut()
-#![feature(ptr_as_ref)]
-// cursors.as_slice()
-#![feature(convert)]
 // for atomicnum
 #![feature(core_intrinsics)]
 // for usleep

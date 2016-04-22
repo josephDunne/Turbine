@@ -42,8 +42,9 @@ impl<T> AtomicNum<T> {
     /// If the return value is equal to `old` then the value was updated.
     #[inline]
     pub fn compare_and_swap(&self, old: T, new: T, order: Ordering) -> T {
-        unsafe { atomic_compare_and_swap(self.v.get(), old, new, order) }
-    }
+        let (x, _) = unsafe { atomic_compare_and_swap(self.v.get(), old, new, order) };
+        x
+    } 
 
     /// Add to the current value, returning the previous
     ///
@@ -178,7 +179,7 @@ unsafe fn atomic_sub<T>(dst: *mut T, val: T, order: Ordering) -> T {
 }
 
 #[inline]
-unsafe fn atomic_compare_and_swap<T>(dst: *mut T, old:T, new:T, order: Ordering) -> T {
+unsafe fn atomic_compare_and_swap<T>(dst: *mut T, old:T, new:T, order: Ordering) -> (T, bool) {
     match order {
         Ordering::Acquire => intrinsics::atomic_cxchg_acq(dst, old, new),
         Ordering::Release => intrinsics::atomic_cxchg_rel(dst, old, new),
